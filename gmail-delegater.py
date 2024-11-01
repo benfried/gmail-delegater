@@ -4,15 +4,18 @@ from google.oauth2 import service_account
 import sys
 
 # Service account credentials
+# This file was generated on the google cloud console (or maybe by the gcloud cli)
+# The service account was created with:
+# $ gcloud iam service-accounts create gmail-delegater --display-name="gmail-delegater"
 SERVICE_ACCOUNT_FILE = './gmail-delegater.json'
 SCOPES = ['https://www.googleapis.com/auth/gmail.settings.sharing',
           'https://www.googleapis.com/auth/gmail.settings.basic']
 
 # User's email address
-USER_EMAIL = 'user@example.com'
+USER_EMAIL = 'unset@unset.com'
 
 # Delegate's email address
-DELEGATE_EMAIL = 'delegate@example.com'
+DELEGATE_EMAIL = 'unset-delegate@unset.com'
 
 def create_delegate(service, user_id, delegate_email):
   """Creates a delegate for the user."""
@@ -66,20 +69,21 @@ def read_delegates(service, user_id):
 
 
 def main():
-    """Creates a Gmail API service and changes the user's delegate."""
+    """Creates a Gmail API service and changes / lists the user's delegate(s)."""
 
     if len(sys.argv) < 3 or len(sys.argv) > 4 :
-        print("Usage: python script.py l | a | d <user_email> [ <delegate_email> ]")
+        print(f"Usage: python {sys.argv[0]} l | a | d <user_email> [ <delegate_email> ]")
         sys.exit(1)
 
     command = sys.argv[1]
     USER_EMAIL = sys.argv[2]
-    if command != 'l':
-        DELEGATE_EMAIL = sys.argv[3]
 
     if command not in ('l', 'a', 'd'):
        print("illegal command")
        sys.exit(1)
+
+    if command != 'l':
+        DELEGATE_EMAIL = sys.argv[3]
 
 
     credentials = service_account.Credentials.from_service_account_file(
@@ -103,8 +107,5 @@ def main():
         print(f'read_delegate(service, {USER_EMAIL}')
         read_delegates(service, USER_EMAIL)
     
-    # Example: Remove an existing delegate
-    # delete_delegate(service, USER_EMAIL, DELEGATE_EMAIL)
-
 if __name__ == '__main__':
   main()
